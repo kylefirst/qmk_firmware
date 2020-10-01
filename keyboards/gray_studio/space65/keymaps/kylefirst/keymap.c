@@ -15,6 +15,14 @@
  */
 #include QMK_KEYBOARD_H
 
+const rgblight_segment_t PROGMEM my_capslock_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+    {0, 3, HSV_RED}
+);
+
+const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
+    my_capslock_layer
+);
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT( \
       KC_GESC,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, KC_DEL,  \
@@ -32,28 +40,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 };
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    case KC_CAPS:
-      if (record->event.pressed) {
-        // when keycode QMKBEST is pressed
-        rgblight_toggle();
-      } else {
-        // when keycode QMKBEST is released
-      }
-      break;
-  }
-  return true;
+uint32_t layer_state_set_user(uint32_t state) {
+    return state;
 }
 
-void matrix_init_user(void) {
-
+bool led_update_user(led_t led_state) {
+    rgblight_set_layer_state(0, led_state.caps_lock);
+    return true;
 }
 
-void matrix_scan_user(void) {
-
-}
-
-void led_set_user(uint8_t usb_led) {
-
+void keyboard_post_init_user(void) {
+    rgblight_layers = my_rgb_layers;
 }
